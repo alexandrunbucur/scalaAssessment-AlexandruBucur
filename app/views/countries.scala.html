@@ -1,0 +1,172 @@
+@(currentPage: Page[(Option[Country], Option[Airport], Option[Runway])], currentOrderBy: Int, currentFilter: String)(implicit flash: play.api.mvc.Flash, messages: Messages)
+
+@import helper._
+
+@import b3.vertical.fieldConstructor
+
+@link(newPage: Int, newOrderBy: Option[Int] = None) = @{
+routes.SearchController.list(newPage, newOrderBy.map { orderBy =>
+if(orderBy == scala.math.abs(currentOrderBy)) -currentOrderBy else orderBy
+}.getOrElse(currentOrderBy), currentFilter)
+}
+
+@header(orderBy: Int, title: String) = {
+<style>
+label[for=element-toggle] {
+  cursor: pointer;
+  color: red;
+}
+#element-toggle {
+  display: none;
+}
+
+#element-toggle:checked ~ #toggled-element tr {
+  display: block;
+  float: left;
+}
+#element-toggle:checked ~ #toggled-element th,
+#element-toggle:checked ~ #toggled-element td {
+  display: block;
+}
+   div.pagination {
+	background-color:white;
+	color:#48b9ef;
+	padding:10px 0 10px 0;
+
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 13px;
+	text-align:center;
+}
+
+div.pagination a {
+background-color:#ff4d4d;
+	color:white;
+	padding:2px 5px;
+	margin:0 2px;
+	text-decoration:none;
+	border:2px solid #ff4d4d;
+}
+
+div.pagination a:hover, div.pagination a:active {
+	border:2px solid #ff4d4d;
+	color:##ff4d4d;
+}
+
+div.pagination span.current {
+	padding:2px 5px;
+	border:2px solid #ff4d4d;
+	color:#fff;
+	font-weight:bold;
+	background-color:#ff4d4d;
+}
+div.pagination span.disabled {
+	display:none;
+}
+#pagination ul {
+    position: absolute;
+}
+
+#pagination ul .current a {
+    color: white;
+}
+input[type=text] {
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    font-size: 16px;
+    background-color: white;
+    background-image: url('searchicon.png');
+    background-position: 10px 10px;
+    background-repeat: no-repeat;
+    padding: 12px 20px 12px 40px;
+}
+ background: url(img_flower.jpg) no-repeat center fixed;
+  background-size: cover;
+
+</style>
+<th class="col@orderBy header @if(scala.math.abs(currentOrderBy) == orderBy) @{if(currentOrderBy < 0) "headerSortDown" else "headerSortUp"}">
+<a href="@link(0, Some(orderBy))">@title</a>
+</th>
+}
+<div class="container">
+
+    @main {
+    <h1>@Messages("Countries and Airports", currentPage.total)</h1>
+    @flash.get("success").map { message =>
+    <div class="alert-message warning">
+        <strong></strong> @message
+    </div>
+    }
+
+    <div id="actions" style="display:inline;">
+        @b3.form(action=routes.SearchController.list()) {
+        <form class="form-horizontal">
+            <input type="text" id="searchbox" class="input-lg col-sm-10" placeholder="Country code or name"  name="f" value="@currentFilter"  >
+            <input type="submit" id="searchsubmit" value="Search" class="w3-btn w3-red w3-border w3-border-tomato w3-text-white w3-round-large col-sm-2" style="font-size:18px">
+        </form>}
+    </div>
+    @Option(currentPage.items).filterNot(_.isEmpty).map { countries =>
+        <table class="table striped table-hover">
+            <thead>
+            <tr>
+                @header(1, "Country Code")
+                @header(2, "Country name")
+                @header(3, "Airport")
+                @header(4, "Runway")
+            </tr>
+            </thead>
+            <tbody>
+            @countries.map {
+            case (country, airport, runway) => {
+            <tr>
+                <td>@country.map(_.code)</td>
+                <td>@country.map(_.name)</td>
+                <td>
+                    @airport.map(_.name).getOrElse { <em>-</em> }
+                </td>
+                <td>
+                    @runway.map(_.airport_ident).getOrElse { <em>-</em> }
+                </td>
+            </tr>
+            }
+            }
+
+            </tbody>
+        </table>
+
+        <div id="pagination" class="pagination">
+            <ul class="pagination pagination-lg">
+                @currentPage.prev.map { page =>
+                <li class="prev">
+                    <a href="@link(page)">&larr; Previous</a>
+                </li>
+                }.getOrElse {
+                <li class="prev disabled">
+                    <a>&larr; Previous</a>
+                </li>
+                }
+                <li class="current">
+                    <a>Displaying @(currentPage.offset + 1) to @(currentPage.offset + countries.size) of @currentPage.total</a>
+                </li>
+                @currentPage.next.map { page =>
+                <li class="next">
+                    <a href="@link(page)">Next &rarr;</a>
+                </li>
+                }.getOrElse {
+                <li class="next disabled">
+                    <a>Next &rarr;</a>
+                </li>
+                }
+            </ul>
+        </div>
+
+        }.getOrElse {
+
+        <div class="well">
+            <em>Nothing to display</em>
+        </div>
+
+        }
+</div>
+
+}

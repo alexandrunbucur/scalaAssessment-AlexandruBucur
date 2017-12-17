@@ -1,0 +1,58 @@
+@(currentPage: Page[(Option[ReportCommon], Int)], currentOrderBy: Int)(implicit flash: play.api.mvc.Flash, messages: Messages)
+
+@import helper._
+
+@import b3.vertical.fieldConstructor
+
+@****************************************
+* Helper generating navigation links    *
+****************************************@
+
+@link(newPage: Int, newOrderBy: Option[Int] = None) = @{
+routes.SearchController.listCommon(newPage, newOrderBy.map { orderBy =>
+if(orderBy == scala.math.abs(currentOrderBy)) -currentOrderBy else orderBy
+}.getOrElse(currentOrderBy))
+}
+
+
+@**********************************
+* Helper generating table headers *
+***********************************@
+@header(orderBy: Int, title: String) = {
+<th class="col@orderBy header @if(scala.math.abs(currentOrderBy) == orderBy) @{if(currentOrderBy < 0) "headerSortDown" else "headerSortUp"}">
+<a href="@link(0, Some(orderBy))">@title</a>
+</th>
+}
+
+<div class="container">
+    @main {
+    <h1>@Messages("Common Runways", currentPage.total)</h1>
+
+    @flash.get("success").map { message =>
+    <div class="alert-message warning">
+        <strong>Done!</strong> @message
+    </div>
+    }
+    @Option(currentPage.items).filterNot(_.isEmpty).map { runways =>
+    <table class="table striped table-hover">
+        <thead>
+        <tr>
+        @header(1, "LE IDENT")
+        @header(2, "Number")
+        </tr>
+        </thead>
+
+    <tbody>
+    @runways.map {
+    case (runway, air) => {
+    <tr>
+        <td>@runway.map(_.le_ident)</td>
+        <td>@air</td>
+    </tr>
+    }
+    }
+    </tbody>
+    </table>
+</div>
+}
+}

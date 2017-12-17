@@ -1,0 +1,18 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Default path will just redirect to the computer list
+GET     /                           controllers.SearchController.index
+
+# Computers list (look at the default values for pagination parameters)
+GET     /search                       @controllers.SearchController.list(p:Int ?= 0, s:Int ?= 2, f ?= "")
+GET     /reportASC                    @controllers.SearchController.listASC(p:Int ?= 0, s:Int ?= 2)
+GET     /reportDESC                   @controllers.SearchController.listDESC(p:Int ?= 0, s:Int ?= 2)
+GET     /countryRw                 @controllers.SearchController.listRunwayTypesByCountry(p:Int ?= 0, s:Int ?= 2)
+GET     /runways                      @controllers.SearchController.listCommon(p:Int ?= 0, s:Int ?= 2)
+
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.at(path="/public", file)
+

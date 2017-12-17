@@ -1,0 +1,64 @@
+@(currentPage: Page[(Option[Country], Option[Airport], Int)], currentOrderBy: Int)(implicit flash: play.api.mvc.Flash, messages: Messages)
+
+@import helper._
+
+@import b3.vertical.fieldConstructor
+
+@****************************************
+* Helper generating navigation links    *
+****************************************@
+
+@link(newPage: Int, newOrderBy: Option[Int] = None) = @{
+routes.SearchController.listASC(newPage, newOrderBy.map { orderBy =>
+if(orderBy == scala.math.abs(currentOrderBy)) -currentOrderBy else orderBy
+}.getOrElse(currentOrderBy))
+}
+
+
+@**********************************
+* Helper generating table headers *
+***********************************@
+@header(orderBy: Int, title: String) = {
+<th class="col@orderBy header @if(scala.math.abs(currentOrderBy) == orderBy) @{if(currentOrderBy < 0) "headerSortDown" else "headerSortUp"}">
+<a href="@link(0, Some(orderBy))">@title</a>
+</th>
+}
+
+
+<div class="container">
+    @main {
+    <h1>@Messages("Airports Report", currentPage.total)</h1>
+
+    @flash.get("success").map { message =>
+    <div class="alert-message warning">
+        <strong>Done!</strong> @message
+    </div>
+    }
+
+    @Option(currentPage.items).filterNot(_.isEmpty).map { countries =>
+<table class="table striped table-hover">
+    <thead>
+    <tr>
+        @header(1, "Country Name")
+        @header(2, "Number of Airports")
+    </tr>
+    </thead>
+    <tbody>
+
+    @countries.map {
+    case (country, airport, air) => {
+    <tr>
+        <td>@country.map(_.name)</td>
+        <td>@air</td>
+    </tr>
+    }
+    }
+
+    </tbody>
+</table>
+</tbody>
+</table>
+</div>
+
+}
+}

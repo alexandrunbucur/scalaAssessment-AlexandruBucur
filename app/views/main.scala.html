@@ -1,0 +1,66 @@
+@(content: Html)(implicit messages: Messages)
+
+<!DOCTYPE html>
+<html>
+    <head>
+
+
+        <title>Lunatech assessment</title>
+
+        <link rel="stylesheet" type="text/css" media="screen" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        <style>
+          .luna
+        {
+            background-image: url('https://media-exp2.licdn.com/media/AAEAAQAAAAAAAAKKAAAAJGYyN2NhODQ4LTQ5MTYtNGEwYy05NjA0LTAwOTNiMDNjNmNhOQ.png');
+            background-repeat: no-repeat;
+            background-position: 50% 10px;
+
+        }
+            body {
+            background: url(http://res.cloudinary.com/dxp14y6u4/image/upload/v1513352283/Red-and-Black-Abstract-4K-Wallpaper_onylmd.jpg);
+            background-size: 100% 100%;
+        }
+        </style>
+
+    </head>
+    <body>
+
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#"><img style="max-width:100px; margin-top: -7px;"
+                    src="https://media-exp2.licdn.com/media/AAEAAQAAAAAAAAKKAAAAJGYyN2NhODQ4LTQ5MTYtNGEwYy05NjA0LTAwOTNiMDNjNmNhOQ.png"></a>
+            </div>
+            <ul class="nav navbar-nav">
+                <li><a href="@routes.SearchController.index()">
+                    Country search
+                </a></li>
+                <li><a href="@routes.SearchController.listRunwayTypesByCountry(0,2)">
+                    Runways by Country
+                </a></li>
+                <li><a href="@routes.SearchController.listDESC(0,2)">
+                    Top 10 Most Aiports
+                </a></li>
+                <li><a href="@routes.SearchController.listASC(0,2)">
+                    Top 10 Least Airports
+                </a></li>
+                <li><a href="@routes.SearchController.listCommon()">
+                    Common Runways
+                </a></li>
+
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <section id="main">
+            @content
+        </section>
+    </div>
+    </body>
+<footer style="position:relative;bottom:-80px; float:none; text-align:center;">
+    ©Copyright - Designed by Alexandru Bucur
+</footer>
+</html>
